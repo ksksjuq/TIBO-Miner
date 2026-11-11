@@ -1,0 +1,315 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101720">
+<title>TIBO MINER</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #0c121b;
+  color: white;
+  font-family: Tahoma, Arial, sans-serif;
+}
+
+.container {
+  max-width: 520px;
+  margin: auto;
+  padding: 20px 15px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.logo {
+  color: #f2c94c;
+  font-size: 25px;
+  font-weight: bold;
+  direction: ltr;
+}
+
+.status {
+  background: #452b22;
+  color: #ffad75;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+}
+
+.card {
+  background: #182332;
+  border: 1px solid #26374a;
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 15px;
+}
+
+.label {
+  color: #9aabbc;
+  font-size: 12px;
+}
+
+.balance {
+  color: #f2c94c;
+  font-size: 30px;
+  font-weight: bold;
+  margin: 15px 0;
+  direction: ltr;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.value {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 13px 0 7px;
+  direction: ltr;
+  text-align: right;
+}
+
+.progress {
+  height: 10px;
+  background: #344253;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 15px;
+}
+
+.progress-fill {
+  width: 0%;
+  height: 100%;
+  background: #f2c94c;
+  transition: width .5s;
+}
+
+input {
+  width: 100%;
+  padding: 15px;
+  background: #0c121b;
+  border: 1px solid #35465a;
+  border-radius: 10px;
+  color: white;
+  margin: 10px 0 18px;
+  outline: none;
+  font-size: 14px;
+}
+
+button {
+  width: 100%;
+  background: #f2c94c;
+  color: #101720;
+  border: none;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: .5;
+}
+
+.note {
+  color: #8d9daf;
+  font-size: 12px;
+  line-height: 2;
+}
+
+footer {
+  text-align: center;
+  color: #728196;
+  font-size: 12px;
+  padding: 20px;
+}
+
+h3 {
+  margin-top: 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+  <div class="logo">🐕 TIBO MINER</div>
+  <div class="status" id="status">متصل نیست</div>
+</header>
+
+<div class="card">
+  <div class="label">موجودی دوج‌کوین شما</div>
+  <div class="balance" id="balance">0.000000 DOGE</div>
+  <div class="label">پاداش استخراج تأییدشده</div>
+</div>
+
+<div class="grid">
+
+  <div class="card">
+    <div class="label">قدرت استخراج</div>
+    <div class="value">—</div>
+    <div class="label">Hashrate</div>
+  </div>
+
+  <div class="card">
+    <div class="label">استخراج ۲۴ ساعته</div>
+    <div class="value">—</div>
+    <div class="label">DOGE / DAY</div>
+  </div>
+
+  <div class="card">
+    <div class="label">حداقل برداشت</div>
+    <div class="value">—</div>
+    <div class="label">DOGE</div>
+  </div>
+
+  <div class="card">
+    <div class="label">باقی‌مانده تا برداشت</div>
+    <div class="value">—</div>
+    <div class="label">DOGE</div>
+  </div>
+
+</div>
+
+<div class="card">
+  <h3>پیشرفت استخراج</h3>
+  <div class="progress">
+    <div class="progress-fill" id="progress"></div>
+  </div>
+  <p class="note" id="progressText">
+    در انتظار اتصال به سرویس استخراج واقعی...
+  </p>
+</div>
+
+<div class="card">
+  <h3>💰 برداشت دوج‌کوین</h3>
+
+  <div class="label">آدرس کیف پول DOGE</div>
+  <input
+    type="text"
+    id="wallet"
+    placeholder="آدرس کیف پول خود را وارد کنید"
+    dir="ltr"
+    autocomplete="off"
+  >
+
+  <div class="label">مقدار برداشت (DOGE)</div>
+  <input
+    type="number"
+    id="amount"
+    placeholder="مقدار دوج‌کوین"
+    min="0"
+    step="any"
+  >
+
+  <button id="withdraw" disabled>
+    برداشت DOGE
+  </button>
+
+  <p class="note" id="message">
+    برای برداشت واقعی باید سرویس استخراج و سیستم پرداخت متصل شود.
+  </p>
+</div>
+
+<footer>
+  TIBO MINER © 2026
+  <br>
+  قدرت فناوری، آینده بهتر
+</footer>
+
+</div>
+
+<script>
+"use strict";
+
+/*
+ TIBO MINER
+ نسخه نمایشی اولیه
+ هیچ استخراج یا پرداخت واقعی انجام نمی‌شود.
+ اطلاعات واقعی بعداً از سرور دریافت خواهند شد.
+*/
+
+const miningData = {
+  connected: false,
+  balance: 0,
+  hashrate: null,
+  dailyEarnings: null,
+  minimumWithdrawal: null
+};
+
+function updateDashboard() {
+  document.getElementById("balance").textContent =
+    miningData.balance.toFixed(6) + " DOGE";
+
+  document.getElementById("status").textContent =
+    miningData.connected ? "متصل" : "متصل نیست";
+
+  const progress = document.getElementById("progress");
+
+  if (
+    miningData.minimumWithdrawal !== null &&
+    miningData.minimumWithdrawal > 0
+  ) {
+    const percent = Math.min(
+      100,
+      miningData.balance /
+      miningData.minimumWithdrawal * 100
+    );
+
+    progress.style.width = percent + "%";
+
+    document.getElementById("progressText").textContent =
+      percent.toFixed(2) + "% از حداقل برداشت تکمیل شده است.";
+  } else {
+    progress.style.width = "0%";
+
+    document.getElementById("progressText").textContent =
+      "در انتظار اتصال به سرویس استخراج واقعی...";
+  }
+
+  document.getElementById("withdraw").disabled =
+    !miningData.connected;
+}
+
+document.getElementById("withdraw").addEventListener(
+  "click",
+  function() {
+    const wallet =
+      document.getElementById("wallet").value.trim();
+
+    const amount =
+      Number(document.getElementById("amount").value);
+
+    if (!wallet || !Number.isFinite(amount) || amount <= 0) {
+      alert("لطفاً آدرس و مقدار معتبر وارد کنید.");
+      return;
+    }
+
+    document.getElementById("message").textContent =
+      "سیستم پرداخت هنوز به سرویس واقعی متصل نشده است.";
+  }
+);
+
+updateDashboard();
+</script>
+
+</body>
+</html>
